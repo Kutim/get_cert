@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -x
+
 if [ -z "$1" ]
 then
     echo
@@ -34,7 +34,7 @@ DIR="${BASE_DIR}/${TIME}"
 mkdir -p ${DIR}
 
  # Generate cert key
- openssl genrsa -out "${DIR}/$1.key.pem" 1024
+ openssl genrsa -out "${DIR}/$1.key.pem" 2048
 
 # Create CSR
 openssl req -new -out "${DIR}/$1.csr.pem" \
@@ -50,8 +50,8 @@ openssl ca -config ./ca.cnf -batch -notext \
     -in "${DIR}/$1.csr.pem" \
     -out "${DIR}/$1.crt" \
     -cert ./out/root.crt \
-    -keyfile ./out/root.key.pem #\
-    #-days 3650
+    -keyfile ./out/root.key.pem
+
 # Chain certificate with CA
 cat "${DIR}/$1.crt" ./out/root.crt > "${DIR}/$1.bundle.crt"
 ln -snf "./${TIME}/$1.bundle.crt" "${BASE_DIR}/$1.bundle.crt"
@@ -63,6 +63,6 @@ ln -snf "../root.crt" "${BASE_DIR}/root.crt"
 echo
 echo "Certificates are located in:"
 
-LS=$([[ `ls --help | grep '\-\-color'` ]] && echo "ls -color" || echo "ls -G")
+#LS=$([[ `ls --help | grep '\-\-color'` ]] && echo "ls --color" || echo "ls -G")
 
-${LS} -la `pwd`/${BASE_DIR}/*.*
+#${LS} -la `pwd`/${BASE_DIR}/*.*
